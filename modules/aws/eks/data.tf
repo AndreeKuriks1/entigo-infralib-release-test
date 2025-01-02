@@ -4,9 +4,9 @@ data "aws_iam_roles" "aws-admin-roles" {
   path_prefix = "/aws-reserved/sso.amazonaws.com/"
 }
 
-#data "aws_iam_role" "aws_auth_role" {
-#  name = var.aws_auth_role
-#}
+data "aws_iam_role" "aws_auth_role" {
+  name = var.aws_auth_role
+}
 
 data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}

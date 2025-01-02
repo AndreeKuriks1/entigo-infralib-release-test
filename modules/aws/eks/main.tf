@@ -7,7 +7,7 @@ locals {
     }
   ], var.aws_auth_role != "" ? [
     {
-      rolearn  = "data.aws_iam_role.aws_auth_role.arn"
+      rolearn  = data.aws_iam_role.aws_auth_role.arn
       username = var. aws_auth_role_username
       groups   = ["system:masters"]
     }
