@@ -1,17 +1,23 @@
 locals {
-  auth_roles = var.iam_admin_role != "" ? [
+  auth_roles = var.iam_admin_role != "" ? concat([
     {
       rolearn  = replace(element(tolist(data.aws_iam_roles.aws-admin-roles[0].arns), 0), "//aws-reserved.*/AWSReservedSSO/", "/AWSReservedSSO")
       username = "aws-admin"
       groups   = ["system:masters"]
     }
-  ] : []
+  ], var.aws_auth_role != "" ? [
+    {
+      rolearn  = "data.aws_iam_role.aws_auth_role.arn"
+      username = var. aws_auth_role_username
+      groups   = ["system:masters"]
+    }
+  ] : []) : []
   
   auth_users = var.aws_auth_user != "" ? [
     {
       userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.aws_auth_user}"
       username = var.aws_auth_user
-      groups   = ["system:masters"]
+      groups   = var.aws_auth_user_groups
     }
   ] : []
   #Cant do yet...
@@ -29,6 +35,7 @@ locals {
       max_size        = var.eks_main_max_size
       instance_types  = var.eks_main_instance_types
       capacity_type   = "ON_DEMAND"
+      key_name         = var.node_ssh_key_pair_name
       release_version = var.eks_cluster_version
 
       launch_template_tags = {
@@ -55,6 +62,7 @@ locals {
       max_size        = var.eks_mainarm_max_size
       instance_types  = var.eks_mainarm_instance_types
       capacity_type   = "ON_DEMAND"
+      key_name         = var.node_ssh_key_pair_name
       release_version = var.eks_cluster_version
       ami_type        = "AL2_ARM_64"
       launch_template_tags = {
@@ -81,6 +89,7 @@ locals {
       max_size        = var.eks_spot_max_size
       instance_types  = var.eks_spot_instance_types
       capacity_type   = "SPOT"
+      key_name         = var.node_ssh_key_pair_name
       release_version = var.eks_cluster_version
 
       taints = [
@@ -118,6 +127,7 @@ locals {
       instance_types  = var.eks_mon_instance_types
       subnet_ids      = var.eks_mon_single_subnet ? [var.private_subnets[0]] : var.private_subnets
       capacity_type   = "ON_DEMAND"
+      key_name         = var.node_ssh_key_pair_name
       release_version = var.eks_cluster_version
       taints = [
         {
@@ -155,6 +165,7 @@ locals {
       instance_types  = var.eks_tools_instance_types
       subnet_ids      = var.eks_tools_single_subnet ? [var.private_subnets[0]] : var.private_subnets
       capacity_type   = "ON_DEMAND"
+      key_name         = var.node_ssh_key_pair_name
       release_version = var.eks_cluster_version
       taints = [
         {
@@ -191,6 +202,7 @@ locals {
       max_size        = var.eks_db_max_size
       instance_types  = var.eks_db_instance_types
       capacity_type   = "ON_DEMAND"
+      key_name         = var.node_ssh_key_pair_name
       release_version = var.eks_cluster_version
       taints = [
         {

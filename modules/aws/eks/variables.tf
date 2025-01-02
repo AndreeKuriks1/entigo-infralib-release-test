@@ -37,10 +37,26 @@ variable "iam_admin_role" {
   default  = "" #Usually "AWSReservedSSO_AWSAdministratorAccess_.*" or "AWSReservedSSO_AdministratorAccess_.*"
 }
 
+variable "aws_auth_role" {
+  type     = string
+  nullable = false
+  default  = ""
+}
+variable "aws_auth_role_username" {
+  type     = string
+  nullable = false
+  default  = ""
+}
+
 variable "aws_auth_user" {
   type     = string
   nullable = false
   default  = ""
+}
+
+variable "aws_auth_user_groups" {
+  type     = list(string)
+  default  = [""]
 }
 
 variable "eks_cluster_public" {
@@ -316,6 +332,12 @@ variable "cloudwatch_log_group_kms_key_id" {
 variable "node_encryption_kms_key_arn" {
   type = string
   default = ""
+}
+
+variable "node_ssh_key_pair_name" {
+  type = string
+  nullable = true
+  default = null
 }
 
 variable "coredns_addon_version" {
